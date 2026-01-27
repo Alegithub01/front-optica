@@ -1,14 +1,17 @@
 "use client"
 
+import { CardDescription } from "@/components/ui/card"
+import { X } from "lucide-react"
+
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { api } from "@/lib/api"
 import type { Pedido, PedidoDetalle } from "@/lib/types"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { PaymentVerificationModal } from "@/components/payment-verification-modal"
-import { ArrowLeft, RefreshCw, Package, Clock, CheckCircle2, Eye } from "lucide-react"
+import { ArrowLeft, RefreshCw, Package, Clock, CheckCircle2, Eye, Loader2 } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 
@@ -20,6 +23,7 @@ export default function PedidosAdminPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const { toast } = useToast()
+  const [expandedPedido, setExpandedPedido] = useState<number | null>(null)
 
   const fetchPedidos = async () => {
     try {
@@ -148,181 +152,228 @@ export default function PedidosAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 to-slate-800 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link href="/admin" className="inline-flex items-center text-slate-400 hover:text-white mb-4">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+          <div className="flex-1">
+            <Link href="/admin" className="inline-flex items-center text-slate-400 hover:text-white mb-3 text-sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver al Panel
             </Link>
-            <h1 className="text-4xl font-bold text-white">Gestión de Pedidos y Pagos</h1>
-            <p className="text-slate-300 mt-2">Verifica y aprueba los comprobantes de pago</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Gestión de Pedidos</h1>
+            <p className="text-slate-300 text-sm lg:text-base mt-1">Verifica y aprueba los comprobantes de pago</p>
           </div>
           <Button
             onClick={fetchPedidos}
+            disabled={loading}
             variant="outline"
-            className="border-slate-600 text-slate-300 hover:text-white bg-transparent"
+            className="border-slate-600 text-slate-300 hover:text-white bg-transparent w-full sm:w-auto"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualizar
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+            {loading ? "Actualizando..." : "Actualizar"}
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 lg:mb-8">
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-300">Total Pedidos</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium text-slate-300">Total</CardTitle>
               <Package className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.total}</div>
+              <div className="text-xl sm:text-2xl font-bold text-white">{stats.total}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-300">Pendientes</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium text-slate-300">Pendientes</CardTitle>
               <Clock className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-slate-300">{stats.pendientes}</div>
+              <div className="text-xl sm:text-2xl font-bold text-slate-300">{stats.pendientes}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-300">En Revisión</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium text-slate-300">En Revisión</CardTitle>
               <Clock className="h-4 w-4 text-amber-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-amber-400">{stats.enRevision}</div>
+              <div className="text-xl sm:text-2xl font-bold text-amber-400">{stats.enRevision}</div>
             </CardContent>
           </Card>
 
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-300">Pagados</CardTitle>
+              <CardTitle className="text-xs sm:text-sm font-medium text-slate-300">Pagados</CardTitle>
               <CheckCircle2 className="h-4 w-4 text-green-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-400">{stats.pagados}</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-400">{stats.pagados}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-slate-800 border-slate-700 col-span-2 sm:col-span-1">
             <CardHeader>
-              <CardTitle className="text-white">Filtrar por Período</CardTitle>
+              <CardTitle className="text-white">Rechazados</CardTitle>
               <CardDescription className="text-slate-400">
-                Selecciona el período de tiempo para ver los pedidos
+                {stats.rechazados}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-                <TabsList className="bg-slate-900">
-                  <TabsTrigger value="all">Todos</TabsTrigger>
-                  <TabsTrigger value="today">Hoy</TabsTrigger>
-                  <TabsTrigger value="week">Esta Semana</TabsTrigger>
-                  <TabsTrigger value="month">Este Mes</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Lista de Pedidos</CardTitle>
-              <CardDescription className="text-slate-400">
-                {loading ? "Cargando pedidos..." : `${pedidos.length} pedidos encontrados`}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-12 text-slate-400">Cargando...</div>
-              ) : pedidos.length === 0 ? (
-                <div className="text-center py-12 text-slate-400">No hay pedidos para este período</div>
-              ) : (
-                <div className="space-y-4">
-                  {pedidos.map((pedido) => (
-                    <div
-                      key={pedido.id}
-                      className="border border-slate-700 rounded-lg p-4 hover:bg-slate-700/50 transition"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-white font-semibold">Pedido #{pedido.id}</h3>
-                          <p className="text-slate-400 text-sm">{formatDate(pedido.fecha)}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getPagoEstadoBadge(pedido.pago_estado)}
-                          {pedido.comprobante_url && (
-                            <Badge variant="outline" className="bg-blue-500/20">
-                              ✓ Comprobante
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="bg-slate-900 rounded p-3 mb-4">
-                        <p className="text-slate-300 text-sm">
-                          <strong>{pedido.nombre_destinatario}</strong> - {pedido.numero_celular}
-                        </p>
-                        <p className="text-slate-400 text-sm">
-                          {pedido.direccion}, {pedido.envio_estado}, {pedido.envio_pais}
-                        </p>
-                      </div>
-
-                      <div className="grid gap-3 mb-4">
-                        {(pedido.detalles || []).map((detalle: PedidoDetalle) => (
-                          <div key={detalle.id} className="bg-slate-700 rounded p-3 flex justify-between items-center">
-                            <div>
-                              <p className="text-white font-medium">{detalle.producto.name}</p>
-                              <p className="text-slate-300 text-sm">
-                                Cantidad: {detalle.cantidad} x ${detalle.precio_unitario}
-                              </p>
-                            </div>
-                            <p className="text-white font-semibold">${detalle.subtotal}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="border-t border-slate-700 pt-4 mb-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-300">Total:</span>
-                          <span className="text-xl font-bold text-white">${pedido.total}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-slate-700">
-                        <div>
-                          <p className="text-slate-300 text-sm font-semibold">Total: ${pedido.total}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          {pedido.pago_estado === "pendiente" || pedido.pago_estado === "en_revision" ? (
-                            <Button
-                              size="sm"
-                              onClick={() => handleVerifyPayment(pedido)}
-                              disabled={!pedido.comprobante_url}
-                              className="bg-blue-600 hover:bg-blue-700"
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              Verificar
-                            </Button>
-                          ) : (
-                            <span className="text-sm text-slate-400">
-                              {pedido.pago_estado === "pagado" ? "✓ Aceptado" : "✗ Rechazado"}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="text-xl sm:text-2xl font-bold text-red-400">{stats.rechazados}</div>
             </CardContent>
           </Card>
         </div>
 
+        {/* Filtros */}
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h2 className="text-white font-semibold text-sm">Filtrar por período:</h2>
+            <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
+              <TabsList className="bg-slate-900 w-full sm:w-auto">
+                <TabsTrigger value="all" className="text-xs sm:text-sm">Todos</TabsTrigger>
+                <TabsTrigger value="today" className="text-xs sm:text-sm">Hoy</TabsTrigger>
+                <TabsTrigger value="week" className="text-xs sm:text-sm">Esta Semana</TabsTrigger>
+                <TabsTrigger value="month" className="text-xs sm:text-sm">Este Mes</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Tabla/Lista */}
+        {loading ? (
+          <Card className="bg-slate-800 border-slate-700">
+            <CardContent className="py-12">
+              <div className="flex items-center justify-center text-slate-400">
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                Cargando pedidos...
+              </div>
+            </CardContent>
+          </Card>
+        ) : pedidos.length === 0 ? (
+          <Card className="bg-slate-800 border-slate-700">
+            <CardContent className="py-12">
+              <div className="text-center text-slate-400">No hay pedidos para este período</div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-800">
+            {/* Desktop Table */}
+            <div className="hidden lg:block">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-700 bg-slate-900">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">ID</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Cliente</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Fecha</th>
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-slate-300">Total</th>
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-300">Estado Pago</th>
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-slate-300">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-700">
+                  {pedidos.map((pedido) => (
+                    <tr key={pedido.id} className="hover:bg-slate-700/50 transition">
+                      <td className="px-6 py-4 text-sm font-medium text-white">#{pedido.id}</td>
+                      <td className="px-6 py-4 text-sm text-slate-300">
+                        <div>{pedido.nombre_destinatario}</div>
+                        <div className="text-slate-500 text-xs">{pedido.numero_celular}</div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-300">{formatDate(pedido.fecha)}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-white text-right">${pedido.total}</td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex justify-center gap-2">
+                          {getPagoEstadoBadge(pedido.pago_estado)}
+                          {pedido.comprobante_url && (
+                            <Badge variant="outline" className="bg-blue-500/20 text-blue-300 text-xs">
+                              ✓
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {pedido.pago_estado === "pendiente" || pedido.pago_estado === "en_revision" ? (
+                          <Button
+                            size="sm"
+                            onClick={() => handleVerifyPayment(pedido)}
+                            disabled={!pedido.comprobante_url}
+                            className="bg-blue-600 hover:bg-blue-700 text-xs"
+                          >
+                            <Eye className="h-3 w-3 mr-1" />
+                            Verificar
+                          </Button>
+                        ) : (
+                          <span className="text-xs text-slate-400">
+                            {pedido.pago_estado === "pagado" ? "✓ Aprobado" : "✗ Rechazado"}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile/Tablet Cards */}
+            <div className="lg:hidden divide-y divide-slate-700">
+              {pedidos.map((pedido) => (
+                <div key={pedido.id} className="p-4 hover:bg-slate-700/50 transition cursor-pointer" onClick={() => setExpandedPedido(expandedPedido === pedido.id ? null : pedido.id)}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-white">Pedido #{pedido.id}</h3>
+                      <p className="text-xs sm:text-sm text-slate-400 mt-1">{formatDate(pedido.fecha)}</p>
+                      <p className="text-xs sm:text-sm text-slate-300 mt-1 font-medium">{pedido.nombre_destinatario}</p>
+                      <p className="text-xs text-slate-500">{pedido.numero_celular}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-base sm:text-lg font-bold text-white whitespace-nowrap">${pedido.total}</div>
+                      {getPagoEstadoBadge(pedido.pago_estado)}
+                    </div>
+                  </div>
+
+                  {/* Expanded Details */}
+                  {expandedPedido === pedido.id && (
+                    <div className="mt-4 pt-4 border-t border-slate-700 space-y-3">
+                      {(pedido.detalles || []).map((detalle: PedidoDetalle) => (
+                        <div key={detalle.id} className="bg-slate-700/50 rounded p-3 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-white font-medium">{detalle.producto.name}</span>
+                            <span className="text-white font-semibold">${detalle.subtotal}</span>
+                          </div>
+                          <div className="text-slate-400 text-xs mt-1">
+                            {detalle.cantidad}x ${detalle.precio_unitario}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex gap-2 pt-2">
+                        {pedido.pago_estado === "pendiente" || pedido.pago_estado === "en_revision" ? (
+                          <Button
+                            size="sm"
+                            onClick={() => handleVerifyPayment(pedido)}
+                            disabled={!pedido.comprobante_url}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs"
+                          >
+                            <Eye className="h-3 w-3 mr-1" />
+                            Verificar Comprobante
+                          </Button>
+                        ) : (
+                          <div className="flex-1 text-center text-xs text-slate-400">
+                            {pedido.pago_estado === "pagado" ? "✓ Aprobado" : "✗ Rechazado"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <PaymentVerificationModal
           pedido={selectedPedido}
           open={modalOpen}

@@ -9,6 +9,22 @@ const apiClient: AxiosInstance = axios.create({
   },
 })
 
+// Interceptor para añadir el token a cada request
+apiClient.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_token")
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+)
+
 export const apiRequest = async <T,>(
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   endpoint: string,
