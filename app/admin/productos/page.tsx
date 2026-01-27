@@ -83,7 +83,9 @@ export default function AdminProductos() {
     setProductos(productos.filter((p) => p.id !== id))
   } catch (err) {
     console.error("[v0]", err)
-    setError("Error al eliminar producto")
+    setError("Error al eliminar producto"
+      
+    )
   }
 }
 

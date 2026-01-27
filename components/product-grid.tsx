@@ -1,15 +1,7 @@
-import ProductCard from "./product-card"
+"use client"
 
-interface Producto {
-  id: number
-  name: string
-  price: number
-  image: string
-  color?: string
-  marca?: string
-  descripcion?: string
-  categoria: { id: number; name: string }
-}
+import type { Producto } from "@/lib/types"
+import { ProductCard } from "@/components/product-card"
 
 interface ProductGridProps {
   productos: Producto[]

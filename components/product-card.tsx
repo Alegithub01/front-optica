@@ -1,104 +1,69 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, Heart } from "lucide-react"
-
-interface Producto {
-  id: number
-  name: string
-  price: number
-  image: string
-  color?: string | string[]
-  marca?: string
-  descripcion?: string
-  categoria: { id: number; name: string }
-}
+import type { Producto } from "@/lib/types"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useCart } from "@/contexts/cart-context"
+import { useToast } from "@/hooks/use-toast"
+import { ShoppingCart } from "lucide-react"
 
 interface ProductCardProps {
   producto: Producto
 }
 
-export default function ProductCard({ producto }: ProductCardProps) {
-  const [liked, setLiked] = useState(false)
-  const [hovered, setHovered] = useState(false)
+export function ProductCard({ producto }: ProductCardProps) {
+  const [selectedColor, setSelectedColor] = useState(producto.color?.[0] || "")
+  const { addItem } = useCart()
+  const { toast } = useToast()
 
-  const handleComprar = () => {
-    console.log("[v0] Comprar producto:", producto.id)
-    // TODO: Integrar con carrito de compras
+  const handleAddToCart = () => {
+    if (!selectedColor) {
+      toast({
+        title: "Selecciona un color",
+        description: "Por favor selecciona un color antes de añadir al carrito",
+        variant: "destructive",
+      })
+      return
+    }
+
+    addItem(producto, selectedColor)
+
+    toast({
+      title: "✓ Producto agregado correctamente",
+      description: `${producto.name} - Color: ${selectedColor}`,
+    })
   }
 
-  const colors = Array.isArray(producto.color)
-    ? producto.color
-    : typeof producto.color === "string"
-      ? JSON.parse(producto.color)
-      : []
-
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-      {/* Image Container */}
-      <div
-        className="relative h-64 bg-slate-100 overflow-hidden"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
+    <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300">
+      <div className="relative aspect-square overflow-hidden bg-gray-100">
         <img
-          src={`/productos/${producto.image}` || "/placeholder.svg"}
+          src={`/productos/${producto.image}`}
           alt={producto.name}
-          className={`w-full h-full object-cover transition-transform duration-300 ${hovered ? "scale-110" : "scale-100"}`}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
         />
-        {/* Wish button */}
-        <button
-          onClick={() => setLiked(!liked)}
-          className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all"
-        >
-          <Heart size={20} className={liked ? "fill-red-500 text-red-500" : "text-slate-400"} />
-        </button>
-
-        {/* Sale badge if applicable */}
-        <div className="absolute top-3 left-3 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-sm font-semibold">
-          Nuevo
-        </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 flex flex-col grow">
-        {/* Brand */}
-        {producto.marca && (
-          <p className="text-xs uppercase tracking-wider text-sky-600 font-semibold mb-1">{producto.marca}</p>
-        )}
-
-        {/* Name */}
-        <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2">{producto.name}</h3>
-
-        {/* Description */}
-        {producto.descripcion && <p className="text-sm text-slate-600 mb-3 line-clamp-2">{producto.descripcion}</p>}
-
-        {colors.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {colors.map((color: string, index: number) => (
-              <span key={index} className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
-                {color}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Price */}
-        <div className="mt-auto mb-4 pt-3 border-t border-slate-100">
-          <p className="text-2xl font-bold text-sky-600">
-            ${producto.price.toLocaleString("es-CO", { minimumFractionDigits: 0 })}
-          </p>
+      <CardContent className="p-4 space-y-3">
+        <div>
+          <h3 className="font-semibold text-lg text-foreground line-clamp-1">{producto.name}</h3>
+          {producto.marca && <p className="text-sm text-muted-foreground">{producto.marca}</p>}
         </div>
 
-        {/* Buy Button */}
-        <button
-          onClick={handleComprar}
-          className="w-full bg-linear-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group"
+        <p className="text-2xl font-bold text-amber-500">${Number(producto.price).toFixed(2)}</p>
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0">
+        <Button
+          onClick={handleAddToCart}
+          disabled={!selectedColor}
+          className="w-full bg-amber-500 hover:bg-amber-600 text-white"
         >
-          <ShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
-          Comprar
-        </button>
-      </div>
-    </div>
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Añadir al Carrito
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

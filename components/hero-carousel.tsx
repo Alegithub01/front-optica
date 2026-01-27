@@ -85,9 +85,7 @@ export default function HeroCarousel() {
               {slide.title.split(" ").slice(1).join(" ")}
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-gray-100">{slide.subtitle}</p>
-            <button className="bg-gradient-to-r from-amber-400 to-cyan-500 hover:from-amber-500 hover:to-cyan-600 text-blue-900 font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
-              {slide.cta}
-            </button>
+            
           </div>
         </div>
 

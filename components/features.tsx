@@ -16,24 +16,12 @@ export default function   Features() {
       description: "Satisfacción garantizada",
       color: "text-cyan-400",
     },
-    {
-      icon: RotateCcw,
-      title: "Devoluciones Fáciles",
-      description: "Cambios sin complicaciones",
-      color: "text-blue-400",
-    },
-    {
-      icon: Headphones,
-      title: "Soporte 24/7",
-      description: "Ayuda cuando la necesites",
-      color: "text-purple-400",
-    },
   ]
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon
             return (

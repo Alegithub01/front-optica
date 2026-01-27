@@ -6,17 +6,8 @@ import api from "@/lib/api"
 import ProductGrid from "@/components/product-grid"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-
-interface Producto {
-  id: number
-  name: string
-  price: number
-  image: string
-  color?: string
-  marca?: string
-  descripcion?: string
-  categoria: { id: number; name: string }
-}
+import type { Producto } from "@/lib/types"
+import Navbar from "@/components/navbar"
 
 export default function CategoriaPage() {
   const params = useParams()
@@ -37,7 +28,6 @@ export default function CategoriaPage() {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error al cargar productos")
-        console.log("[v0] Error fetching productos:", err)
       } finally {
         setLoading(false)
       }
@@ -52,7 +42,7 @@ export default function CategoriaPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto mb-4" />
           <p className="text-slate-600">Cargando productos...</p>
         </div>
       </div>
@@ -74,7 +64,7 @@ export default function CategoriaPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      {/* Header */}
+      <Navbar/>
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link href="/" className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 mb-4">
@@ -86,7 +76,6 @@ export default function CategoriaPage() {
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {productos.length === 0 ? (
           <div className="text-center py-12">
