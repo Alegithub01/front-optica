@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.optica-nuevo-estilo.com"
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

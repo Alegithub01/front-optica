@@ -66,7 +66,7 @@ export default function Categories() {
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
                 <h3 className="text-2xl font-bold text-white mb-4">{category.name}</h3>
                 <button
-                  onClick={() => router.push(`/categorias/${category.id}`)} 
+                  onClick={() => router.push(`/categoria/${category.id}`)} 
                   className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold rounded-lg transition-colors">
                   Explorar
                 </button>

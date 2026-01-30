@@ -20,7 +20,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-3 text-sm">Síguenos</h4>
             <div className="flex gap-3 md:justify-end">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/opticanuevoestilooptico1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors"
@@ -28,14 +28,14 @@ export default function Footer() {
               >
                  <Image
                         src="/redes/insta.png"
-                        alt="TikTok"
+                        alt="Instagram"
                         width={24}
                         height={24}
                         className="w-8 h-8"
                         />
               </a>
               <a
-                href="https://tiktok.com"
+                href="https://www.tiktok.com/@optica.nuevoestilo.cocha"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors"
@@ -44,6 +44,21 @@ export default function Footer() {
                 <Image
                         src="/redes/tik.png"
                         alt="TikTok"
+                        width={24}
+                        height={24}
+                        className="w-8 h-8"
+                        />
+              </a>
+              <a
+                href="https://www.facebook.com/p/Optica-Nuevo-Estilo-61562835538089"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors"
+                aria-label="Facebook"
+              >
+                <Image
+                        src="/redes/face.png"
+                        alt="Facebook"
                         width={24}
                         height={24}
                         className="w-8 h-8"

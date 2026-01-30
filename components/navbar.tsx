@@ -39,11 +39,6 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-            <Link href="/admin">
-              <Button variant="ghost" className="text-xs sm:text-sm px-2 sm:px-4">
-                Admin
-              </Button>
-            </Link>
             <CartSheet />
           </div>
 

@@ -26,25 +26,20 @@ export default function PagoPage() {
   const [pagoCompleto, setPagoCompleto] = useState(false)
 
   useEffect(() => {
-    const id = localStorage.getItem("current_pedido_id")
-    const data = localStorage.getItem("checkout_data")
+  const id = localStorage.getItem("current_pedido_id")
+  const data = localStorage.getItem("checkout_data")
+  const monto = localStorage.getItem("checkout_total") || "0.00"
 
-    if (id) {
-      setPedidoId(Number.parseInt(id))
-    }
-    if (data) {
-      setCheckoutData(JSON.parse(data))
-    }
+  if (id) setPedidoId(Number.parseInt(id))
+  if (data) setCheckoutData(JSON.parse(data))
+  setPaymentInfo({ monto })
 
-    if (!id) {
-      router.push("/")
-    }
-  }, [router])
+  if (!id) router.push("/")
+}, [router])
 
   // Información de pago (puedes configurar esto)
-  const paymentInfo = {
-    monto: localStorage.getItem("checkout_total") || "0.00",
-  }
+  const [paymentInfo, setPaymentInfo] = useState({ monto: "0.00" })
+
 
   const handleComprobanteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

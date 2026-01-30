@@ -4,7 +4,7 @@ import { MessageCircle } from "lucide-react"
 import Image from "next/image"
 
 export default function WhatsAppFloatingButton() {
-  const phoneNumber = "59178311986" // Reemplaza con tu número de WhatsApp
+  const phoneNumber = "59172733229" // Reemplaza con tu número de WhatsApp
   const message = "Hola, me gustaría más información"
 
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
